@@ -9,7 +9,6 @@ f.close()
 setup(
     name='django-blog',
     version='0.1',
-    package_dir={'django-blog': 'blog'},
     description='A very simple django blog application.',
     author='Marius Ionescu',
     author_email='marius@appix.io',
