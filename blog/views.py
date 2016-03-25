@@ -17,6 +17,10 @@ class BlogView(View):
         search = request.GET.get('q')
         page_number = request.GET.get('p', 0)
 
+        language = request.path.split('/')[1]
+        available_languages = [l[0] for l in Post.LANGUAGES]
+        language = language if language in available_languages else 'ro'
+
         context = {}
         if CMS:
             try:
@@ -31,14 +35,14 @@ class BlogView(View):
                     context[placeholder.name] = placeholder.content
 
         if request.user.is_authenticated():
-            qs = Post.objects.all().order_by('-date_created')
+            qs = Post.objects.filter(language=language).order_by('-date_created')
             if search:
-                qs = qs.filter(content__contains=search)
+                qs = qs.filter(language=language, content__contains=search)
             context['posts'] = qs[page_number*10:page_number+10]
         else:
-            qs = Post.objects.filter(published=True).order_by('-date_created')
+            qs = Post.objects.filter(language=language, published=True).order_by('-date_created')
             if search:
-                qs = qs.filter(content__contains=search)
+                qs = qs.filter(language=language, content__contains=search)
             context['posts'] = qs[page_number*10:page_number+10]
         context['path'] = request.path
         return render(request, 'blog.html', context)
