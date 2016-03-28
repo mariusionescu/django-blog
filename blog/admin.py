@@ -21,6 +21,8 @@ class PostAdmin(admin.ModelAdmin):
             )
         }
 
+    list_display = ('title', 'language', 'date_created', 'published')
+
 admin.site.register(models.Post, PostAdmin)
 
 
