@@ -45,12 +45,21 @@ class BlogView(View):
                 qs = qs.filter(language=language, content__contains=search)
             context['posts'] = qs[page_number*10:page_number+10]
         context['path'] = request.path
-        return render(request, 'blog.html', context)
+
+        if language == 'ro':
+            return render(request, 'blog.html', context)
+        else:
+            return render(request, 'en/blog.html', context)
 
 
 class PostView(View):
 
     def get(self, request, slug):
+
+        language = request.path.split('/')[1]
+        available_languages = [l[0] for l in Post.LANGUAGES]
+        language = language if language in available_languages else 'ro'
+
         context = {}
         if CMS:
             try:
@@ -76,4 +85,8 @@ class PostView(View):
         context['post'] = post
         context['body_class'] = 'blog-page blog-single'
         context['recent_posts'] = recent_posts
-        return render(request, 'post.html', context)
+
+        if language == 'ro':
+            return render(request, 'post.html', context)
+        else:
+            return render(request, 'en/post.html', context)
